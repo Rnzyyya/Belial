@@ -1,0 +1,3 @@
+# Local drafts and preview tools are not part of the deployable site.
+outputs/
+work/

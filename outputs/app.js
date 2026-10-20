@@ -113,9 +113,11 @@
 
   // A defined easing curve makes in-page navigation feel like part of the scene.
   let scrollAnimation = 0;
+  let previousScrollBehavior = '';
   function cancelScrollAnimation() {
     if (scrollAnimation) cancelAnimationFrame(scrollAnimation);
     scrollAnimation = 0;
+    document.documentElement.style.scrollBehavior = previousScrollBehavior;
   }
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', event => {
@@ -129,13 +131,16 @@
       if (paused || Math.abs(to - from) < 2) {
         window.scrollTo(0, to);
       } else {
+        previousScrollBehavior = document.documentElement.style.scrollBehavior;
+        document.documentElement.style.scrollBehavior = 'auto';
         const duration = Math.min(1150, Math.max(680, Math.abs(to - from) * .85));
         const started = performance.now();
         function glide(now) {
           const t = Math.min(1, (now - started) / duration);
           const eased = 1 - Math.pow(1 - t, 4);
           window.scrollTo(0, from + (to - from) * eased);
-          scrollAnimation = t < 1 ? requestAnimationFrame(glide) : 0;
+          if (t < 1) scrollAnimation = requestAnimationFrame(glide);
+          else cancelScrollAnimation();
         }
         scrollAnimation = requestAnimationFrame(glide);
       }
