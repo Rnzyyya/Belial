@@ -337,4 +337,28 @@
   else window.addEventListener('resize', resize);
   resize();
   setMotion(paused);
+
+  // Keep a shared page-view total. Local previews read the number without adding a visit.
+  const visitCount = document.getElementById('visit-count');
+  const isLiveSite = location.hostname === 'belial.vercel.app';
+  const visitUrl = 'https://countapi.mileshilliard.com/api/v1/' +
+    (isLiveSite ? 'hit' : 'get') + '/belial-vercel-homepage';
+  const visitRequest = new AbortController();
+  const visitTimeout = setTimeout(() => visitRequest.abort(), 6500);
+  fetch(visitUrl, { signal: visitRequest.signal, cache: 'no-store' })
+    .then(response => {
+      if (!response.ok) throw new Error('Counter unavailable');
+      return response.json();
+    })
+    .then(data => {
+      const count = Number(data.value);
+      if (!Number.isSafeInteger(count) || count < 0) throw new Error('Invalid count');
+      visitCount.textContent = new Intl.NumberFormat().format(count);
+    })
+    .catch(() => {
+      visitCount.parentElement.title = isLiveSite
+        ? 'Visit count temporarily unavailable'
+        : 'Counting starts on the live website';
+    })
+    .finally(() => clearTimeout(visitTimeout));
 })();

@@ -56,6 +56,10 @@
 .profile-float{width:292px;justify-self:center;margin-top:155px;position:relative;animation:profileFloat 5.8s ease-in-out infinite;will-change:transform}
 .profile-float:before{content:"";position:absolute;inset:12% -17%;z-index:-1;border-radius:50%;background:#ae70ff2a;filter:blur(48px);animation:profileAura 5.8s ease-in-out infinite}
 .profile-float .profile-card{width:100%;margin:0}
+.footer>.visit-count{display:flex;align-items:center;gap:9px;white-space:nowrap;font:8px var(--mono);letter-spacing:.08em;color:#867895}
+.visit-count .visit-orb{width:6px;height:6px;border-radius:50%;background:#b89bf2;box-shadow:0 0 11px #ad83eea8}
+.visit-count strong{font:600 11px var(--mono);letter-spacing:0;color:#d5c1f4;min-width:20px}
+@media(max-width:760px){.footer .visit-count{order:2;margin-left:auto}.footer>div:last-child{order:1;margin-left:0}.footer>span{order:3}}
 @keyframes profileFloat{0%,100%{transform:translate3d(0,4px,0) rotate(-1deg)}50%{transform:translate3d(0,-17px,0) rotate(1.2deg)}}
 @keyframes profileAura{0%,100%{opacity:.45;transform:scale(.9)}50%{opacity:.85;transform:scale(1.1)}}
 @media(max-width:1050px){.profile-float{width:265px}}
