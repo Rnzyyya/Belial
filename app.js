@@ -1,10 +1,9 @@
 (() => {
   'use strict';
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const site = document.getElementById('site');
   const loader = document.getElementById('loader');
   const motionButton = document.getElementById('motion-toggle');
-  let paused = reducedMotion.matches;
+  let paused = false;
   let toastTimer;
   let loadingFinished = false;
   let rafId = 0;
@@ -40,7 +39,7 @@
       document.body.classList.remove('loading');
       site.inert = false;
       resumeTyping();
-    }, reducedMotion.matches ? 0 : 720);
+    }, 720);
   }
   function loadingFrame(now) {
     if (loadingFinished) return;
@@ -100,17 +99,17 @@
     nameTimer = setTimeout(callback, delay);
   }
   function typeNextLetter() {
-    if (paused || !heroVisible || document.hidden) return stopTyping();
+    if (paused || document.hidden) return stopTyping();
     namePosition += 1;
     typedName.textContent = 'Belial'.slice(0, namePosition);
     if (namePosition < 6) queueTyping(typeNextLetter, 115);
     else {
       heroTitle.classList.remove('typing');
-      queueTyping(eraseNextLetter, 2000);
+      queueTyping(eraseNextLetter, 1050);
     }
   }
   function changeNameFont() {
-    if (paused || !heroVisible || document.hidden) return stopTyping();
+    if (paused || document.hidden) return stopTyping();
     nameFontIndex = (nameFontIndex + 1) % nameFonts.length;
     typedName.classList.remove(...nameFonts);
     typedName.classList.add(nameFonts[nameFontIndex]);
@@ -120,7 +119,7 @@
     queueTyping(typeNextLetter, 260);
   }
   function eraseNextLetter() {
-    if (paused || !heroVisible || document.hidden) return stopTyping();
+    if (paused || document.hidden) return stopTyping();
     heroTitle.classList.add('typing');
     namePosition -= 1;
     typedName.textContent = 'Belial'.slice(0, namePosition);
@@ -128,8 +127,8 @@
     else queueTyping(changeNameFont, 260);
   }
   function resumeTyping() {
-    if (paused || !loadingFinished || !heroVisible || document.hidden || nameTimer) return;
-    queueTyping(eraseNextLetter, 1700);
+    if (paused || !loadingFinished || document.hidden || nameTimer) return;
+    queueTyping(eraseNextLetter, 650);
   }
 
   // A defined easing curve makes in-page navigation feel like part of the scene.
@@ -285,14 +284,10 @@
     }
   }
   motionButton.addEventListener('click', () => setMotion(!paused));
-  reducedMotion.addEventListener('change', e => setMotion(e.matches));
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(entries => {
       heroVisible = entries[0].isIntersecting;
-      if (heroVisible) {
-        resumeAnimation();
-        resumeTyping();
-      } else stopTyping();
+      if (heroVisible) resumeAnimation();
     }).observe(hero);
   }
   document.addEventListener('visibilitychange', () => {
