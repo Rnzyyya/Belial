@@ -214,16 +214,15 @@
   const canvas = document.getElementById('starfield');
   const context = canvas.getContext('2d');
   let stars = [], width = 0, height = 0, lastFrame = 0, heroVisible = true;
-  let pointerX = 0, pointerY = 0, easedX = 0, easedY = 0;
   const hero = document.querySelector('.hero');
   function resize() {
     const bounds = hero.getBoundingClientRect();
     width = bounds.width; height = bounds.height;
-    const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+    const ratio = Math.min(window.devicePixelRatio || 1, 1.25);
     canvas.width = Math.floor(width * ratio); canvas.height = Math.floor(height * ratio);
     if (!context) return;
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
-    stars = Array.from({ length: Math.round(width / 6) }, () => ({
+    stars = Array.from({ length: Math.min(140, Math.max(40, Math.round(width / 10))) }, () => ({
       x: Math.random() * width, y: Math.random() * height,
       r: Math.random() * .9 + .25, a: Math.random() * .55 + .1,
       speed: Math.random() * .1 + .025, phase: Math.random() * Math.PI * 2
@@ -252,11 +251,8 @@
   function animate(time) {
     rafId = 0;
     if (paused || document.hidden || !heroVisible) return;
-    if (time - lastFrame > 32) {
+    if (time - lastFrame > 42) {
       drawStars(time);
-      easedX += (pointerX - easedX) * .04; easedY += (pointerY - easedY) * .04;
-      const art = document.getElementById('singularity');
-      art.style.setProperty('--px', easedX + 'px'); art.style.setProperty('--py', easedY + 'px');
       lastFrame = time;
     }
     rafId = requestAnimationFrame(animate);
@@ -275,8 +271,6 @@
       stopTyping();
       cancelScrollAnimation();
       cancelAnimationFrame(rafId); rafId = 0;
-      document.getElementById('singularity').style.setProperty('--px', '0px');
-      document.getElementById('singularity').style.setProperty('--py', '0px');
       document.querySelectorAll('[data-tilt]').forEach(el => el.style.transform = '');
     } else {
       resumeAnimation();
@@ -297,22 +291,25 @@
       resumeTyping();
     }
   });
-  hero.addEventListener('pointermove', e => {
-    if (paused || e.pointerType !== 'mouse') return;
-    const bounds = hero.getBoundingClientRect();
-    pointerX = ((e.clientX - bounds.left) / bounds.width - .5) * 15;
-    pointerY = ((e.clientY - bounds.top) / bounds.height - .5) * 11;
-  });
-  hero.addEventListener('pointerleave', () => { pointerX = 0; pointerY = 0; });
   document.querySelectorAll('[data-tilt]').forEach(card => {
+    let tiltFrame = 0;
+    let nextTilt = '';
     card.addEventListener('pointermove', e => {
       if (paused || e.pointerType !== 'mouse') return;
       const bounds = card.getBoundingClientRect();
       const x = (e.clientX - bounds.left) / bounds.width - .5;
       const y = (e.clientY - bounds.top) / bounds.height - .5;
-      card.style.transform = 'perspective(900px) rotateX(' + (-y * 5) + 'deg) rotateY(' + (x * 5) + 'deg)';
+      nextTilt = 'perspective(900px) rotateX(' + (-y * 5) + 'deg) rotateY(' + (x * 5) + 'deg)';
+      if (!tiltFrame) tiltFrame = requestAnimationFrame(() => {
+        card.style.transform = nextTilt;
+        tiltFrame = 0;
+      });
     });
-    card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+    card.addEventListener('pointerleave', () => {
+      if (tiltFrame) cancelAnimationFrame(tiltFrame);
+      tiltFrame = 0;
+      card.style.transform = '';
+    });
   });
   function updateProgress() {
     const range = document.documentElement.scrollHeight - window.innerHeight;

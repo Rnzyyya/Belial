@@ -41,7 +41,7 @@
 .hero-description,.about-copy p{font-size:13px}
 .stack-card p,.game-content p{font-size:12px}
 /* Avatar crop keeps the knight, rather than the cover's title, in the small frame. */
-.avatar{background:#16191b url('assets/elden-ring.png') 49% 86%/340% auto no-repeat}
+.avatar{background:#16191b url('assets/elden-ring-small.jpg') 49% 86%/340% auto no-repeat}
 .avatar>img{opacity:0}
 .motion-paused .hero-copy,.motion-paused .profile-card{animation:none;opacity:1;translate:none}
 /* Animation / responsive */
@@ -56,6 +56,12 @@
 .profile-float{width:292px;justify-self:center;margin-top:155px;position:relative;animation:profileFloat 5.8s ease-in-out infinite;will-change:transform}
 .profile-float:before{content:"";position:absolute;inset:12% -17%;z-index:-1;border-radius:50%;background:#ae70ff2a;filter:blur(48px);animation:profileAura 5.8s ease-in-out infinite}
 .profile-float .profile-card{width:100%;margin:0}
+/* Keep the float on its own composited layer without repainting a live backdrop blur. */
+.profile-float .profile-card{background:linear-gradient(150deg,#262031,#131119 60%);backdrop-filter:none;will-change:transform}
+.profile-banner{background:linear-gradient(120deg,#82619835,#39284911),url('assets/lands-between-small.jpg') center 30%/cover}
+.profile-float:before{filter:none;background:radial-gradient(ellipse,#a86bf54d 0,#a86bf518 45%,transparent 72%)}
+.singularity{transition:none;will-change:auto}
+.singularity>img{animation:none;filter:none}
 .footer>.visit-count{display:flex;align-items:center;gap:9px;white-space:nowrap;font:8px var(--mono);letter-spacing:.08em;color:#867895}
 .visit-count .visit-orb{width:6px;height:6px;border-radius:50%;background:#b89bf2;box-shadow:0 0 11px #ad83eea8}
 .visit-count strong{font:600 11px var(--mono);letter-spacing:0;color:#d5c1f4;min-width:20px}
