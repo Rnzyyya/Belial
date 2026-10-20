@@ -20,7 +20,14 @@
     <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z"/></symbol>
     <symbol id="i-discord" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M19.7 5.1A19 19 0 0 0 15 3.7l-.5 1a17 17 0 0 0-5 0l-.5-1a19 19 0 0 0-4.7 1.4C1.4 9.5.6 13.8 1 18a19 19 0 0 0 5.7 3l1.2-2-1.9-1 .5-.3c3.7 1.7 7.7 1.7 11.4 0l.5.3-1.9 1 1.2 2a19 19 0 0 0 5.7-3c.5-4.9-.9-9.2-3.7-12.9ZM8.5 15.4c-1.1 0-2-1.1-2-2.4s.9-2.3 2-2.3 2 1 2 2.3-.9 2.4-2 2.4Zm7 0c-1.1 0-2-1.1-2-2.4s.9-2.3 2-2.3 2 1 2 2.3-.9 2.4-2 2.4Z"/></symbol>
   </defs></svg>
-  <div class="loader" id="loader" aria-label="Loading Belial's world"><div class="loader-orbit"><span></span><b>B</b></div><span class="micro">ESTABLISHING A CONNECTION</span><div class="load-track"><i id="load-bar"></i></div><div class="load-info"><span id="load-message">Finding the signal</span><span id="load-number">00%</span></div></div>
+  <div class="loader" id="loader" role="status" aria-live="polite" aria-label="Loading Belial's world">
+    <div class="loader-top"><span>THE VOID // 001</span><span>WORLD INITIALIZATION</span></div>
+    <div class="loader-orbit" aria-hidden="true"><span></span><b>B</b></div>
+    <div class="loader-title">BELIAL<span>.</span></div>
+    <span class="loader-subtitle">A new world is taking shape.</span>
+    <div class="loader-panel"><div class="loader-panel-top"><span>LOADING WORLD</span><span id="load-stage">01 / 04</span></div><div class="load-track"><i id="load-bar"></i></div><div class="load-info"><span id="load-message">Finding the signal</span><span id="load-number">00%</span></div></div>
+    <div class="loader-bottom"><span>TRANSMITTING FROM THE EDGE OF THE VOID</span><button type="button" id="skip-intro" aria-label="Skip loading intro">SKIP INTRO <span aria-hidden="true">↗</span></button></div>
+  </div>
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="scroll-progress" aria-hidden="true"><i id="scroll-progress"></i></div>
   <div class="site" id="site">

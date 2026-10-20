@@ -15,7 +15,7 @@
   let nameTimer = 0;
   let namePosition = 6;
   const start = performance.now();
-  const minimumLoad = reducedMotion.matches ? 150 : 1600;
+  const minimumLoad = 5600;
   document.body.classList.add('loading');
   site.inert = true;
 
@@ -26,31 +26,52 @@
   ]);
   let ready = false;
   assetsReady.then(() => { ready = true; });
+  document.getElementById('skip-intro').addEventListener('click', finishLoading);
   function finishLoading() {
     if (loadingFinished) return;
     loadingFinished = true;
+    loader.classList.add('ready');
     document.getElementById('load-bar').style.width = '100%';
     document.getElementById('load-number').textContent = '100%';
-    document.getElementById('load-message').textContent = 'Welcome to my world';
+    document.getElementById('load-message').textContent = 'World ready. Entering now.';
     setTimeout(() => {
       loader.classList.add('done');
       loader.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('loading');
       site.inert = false;
       resumeTyping();
-    }, reducedMotion.matches ? 0 : 220);
+    }, reducedMotion.matches ? 0 : 720);
   }
   function loadingFrame(now) {
+    if (loadingFinished) return;
     const elapsed = now - start;
-    const percent = Math.min(94, Math.floor(elapsed / minimumLoad * 92));
+    const checkpoints = [[0,0],[900,24],[2100,58],[3300,78],[4300,89],[5100,96],[5600,99]];
+    let percent = 99;
+    for (let i = 1; i < checkpoints.length; i++) {
+      if (elapsed <= checkpoints[i][0]) {
+        const [startTime, startValue] = checkpoints[i - 1];
+        const [endTime, endValue] = checkpoints[i];
+        const fraction = Math.max(0, (elapsed - startTime) / (endTime - startTime));
+        percent = Math.floor(startValue + (endValue - startValue) * fraction);
+        break;
+      }
+    }
     document.getElementById('load-bar').style.width = percent + '%';
     document.getElementById('load-number').textContent = String(percent).padStart(2, '0') + '%';
-    document.getElementById('load-message').textContent = percent < 35 ? 'Finding the signal' : percent < 75 ? 'Mapping the orbit' : 'Opening the void';
-    if ((ready && elapsed >= minimumLoad) || elapsed >= 4000) finishLoading();
+    const stage = elapsed < 1200 ? ['01 / 04', 'Finding the signal']
+      : elapsed < 2600 ? ['02 / 04', 'Calibrating the portal']
+      : elapsed < 4100 ? ['03 / 04', 'Gathering world fragments']
+      : elapsed < minimumLoad ? ['04 / 04', 'Opening the void']
+      : ['04 / 04', 'The world is almost ready'];
+    const stageLabel = document.getElementById('load-stage');
+    const message = document.getElementById('load-message');
+    if (stageLabel.textContent !== stage[0]) stageLabel.textContent = stage[0];
+    if (message.textContent !== stage[1]) message.textContent = stage[1];
+    if ((ready && elapsed >= minimumLoad) || elapsed >= 8200) finishLoading();
     else requestAnimationFrame(loadingFrame);
   }
   requestAnimationFrame(loadingFrame);
-  setTimeout(finishLoading, 4500);
+  setTimeout(finishLoading, 8500);
 
   // Reveal once; content remains readable if the observer is unsupported.
   const reveals = document.querySelectorAll('.reveal');
